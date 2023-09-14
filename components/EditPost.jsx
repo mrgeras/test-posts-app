@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 
-const EditPosts = ({ navigation }) => {
-  const [title, setTitle] = useState('');
-  const [image, setImage] = useState('');
-  const [description, setDescription] = useState('');
+const EditPosts = ({ post, onClose, onUpdatePost }) => {
+  const [title, setTitle] = useState(post.title || '');
+  const [image, setImage] = useState(post.image || '');
+  const [description, setDescription] = useState(post.description || '');
+
+  useEffect(() => {
+    setTitle(post.title);
+    setImage(post.image);
+    setDescription(post.description);
+  }, [post]);
 
   const handleSaveChanges = () => {
+    onUpdatePost({ ...post, title, image, description });
     onClose();
   };
 

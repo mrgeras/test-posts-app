@@ -7,16 +7,29 @@ const UserPosts = ({ navigation, onCreatePost }) => {
   const [posts, setPosts] = useState([]);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedPost, setSelectedPost] = useState({});
 
-  const handleEditPost = () => {
+  const handleEditPost = (post) => {
+    setSelectedPost(post);
     setEditModalVisible(!editModalVisible);
   };
 
-const handleCreatePost = (newPost) => {
-  setPosts((prevPosts) => {
-    return [...prevPosts, newPost];
-  });
-};
+  const handleUpdatePost = (updatedPost) => {
+    const newPosts = posts.map((post) => {
+      if (post.id === updatedPost.id) {
+        return updatedPost;
+      }
+
+      return post;
+    });
+    setPosts(newPosts);
+  };
+
+  const handleCreatePost = (newPost) => {
+    setPosts((prevPosts) => {
+      return [...prevPosts, newPost];
+    });
+  };
 
   const handleClose = (action) => {
     if (action === 'create') {
@@ -25,10 +38,6 @@ const handleCreatePost = (newPost) => {
       setEditModalVisible(!editModalVisible);
     }
   };
-
-  // const handleCreatePostSuccess = (newPost) => {
-  //   setPosts([...posts, newPost]);
-  // };
 
   return (
     <View style={styles.container}>
@@ -40,10 +49,15 @@ const handleCreatePost = (newPost) => {
             <Text style={styles.title}>{post.title}</Text>
             <Text style={styles.description}>{post.description}</Text>
           </View>
+          <View style={styles.editButtonContainer}>
+            <Button
+              title='Редактировать'
+              onPress={() => handleEditPost(post)}
+            />
+          </View>
         </View>
       ))}
       <View style={styles.buttonGroup}>
-        <Button title='Редактировать' onPress={handleEditPost} />
         <Button
           title='Создать пост'
           onPress={() => setCreateModalVisible(true)}
@@ -62,7 +76,11 @@ const handleCreatePost = (newPost) => {
         visible={editModalVisible}
         animationType='slide'
         transparent={true}>
-        <EditPosts onClose={() => handleClose('edit')} />
+        <EditPosts
+          post={selectedPost}
+          onClose={() => handleClose('edit')}
+          onUpdatePost={handleUpdatePost}
+        />
       </Modal>
     </View>
   );
