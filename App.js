@@ -1,20 +1,57 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import SignIn from './components/SingIn';
+import Profile from './components/Profile';
+import UserPosts from './components/UserPosts';
 
-export default function App() {
+const Tab = createMaterialTopTabNavigator();
+const App = () => {
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const [posts, setPosts] = useState([]);
+
+  const handleLogin = (successfulLogin) => {
+    setLoggedIn(successfulLogin);
+  };
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    <NavigationContainer
+      onStateChange={(state) => {
+        const { index, routes } = state;
+        const currentRoute = routes[index];
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+        if (loggedIn && currentRoute.name === 'Выход') {
+          handleLogout();
+        }
+      }}>
+      <Tab.Navigator>
+        {!loggedIn && (
+          <Tab.Screen
+            name='Вход'
+            component={(props) => <SignIn {...props} onLogin={handleLogin} />}
+          />
+        )}
+        {loggedIn && (
+          <>
+            <Tab.Screen name='Профиль' component={Profile} />
+            <Tab.Screen
+              name='Посты'
+              component={(props) => (
+                <UserPosts {...props} onCreatePost={setPosts} />
+              )}
+            />
+            <Tab.Screen name='Выход' component={() => null} />
+          </>
+        )}
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default App;
