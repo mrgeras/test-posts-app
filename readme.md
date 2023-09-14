@@ -1,6 +1,6 @@
 -установите зависимости:
 npm i
-
+<br/>
 - запуск приложения:
   npm run web
 npm run android
