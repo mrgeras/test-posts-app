@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 
-const CreatePost = ({ onCreatePost }) => {
+const CreatePost = ({ onCreatePost, onClose }) => {
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
 
-const handleCreatePost = () => {
-  const newPost = {
-    id: Math.random().toString(),
-    title: title,
-    image: image,
-    description: description,
-  };
+  const handleCreatePost = () => {
+    const newPost = {
+      id: Math.random().toString(),
+      title: title,
+      image: image,
+      description: description,
+    };
 
-  onCreatePost(newPost);
-};
+    onCreatePost(newPost);
+    onClose();
+  };
 
   return (
     <View style={styles.container}>
